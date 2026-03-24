@@ -1,3 +1,4 @@
+import { UploadPanel } from "../../components/documents/upload-panel";
 import { renderDocumentTable } from "../../components/documents/document-table";
 import { renderRunModeSelector } from "../../components/documents/run-mode-selector";
 import { listDocumentRecords } from "../../lib/documents/store.ts";
@@ -49,6 +50,7 @@ export default async function DocumentsPage() {
           업로드된 모의고사 문서를 상태와 실행 모드 기준으로 관리하는 교사용
           대시보드.
         </p>
+        <UploadPanel />
         <p
           style={{
             margin: "0 0 16px",
