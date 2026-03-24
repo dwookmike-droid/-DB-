@@ -1,0 +1,9 @@
+{
+  "name": "@onestop/print-templates",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "echo 'print template build placeholder'",
+    "test": "echo 'print template test placeholder'"
+  }
+}

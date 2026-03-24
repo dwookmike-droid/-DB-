@@ -1,0 +1,9 @@
+{
+  "name": "@onestop/db",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "echo 'db build placeholder'",
+    "test": "echo 'db test placeholder'"
+  }
+}

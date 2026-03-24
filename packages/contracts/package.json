@@ -1,0 +1,9 @@
+{
+  "name": "@onestop/contracts",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "echo 'contracts build placeholder'",
+    "test": "echo 'contracts test placeholder'"
+  }
+}
