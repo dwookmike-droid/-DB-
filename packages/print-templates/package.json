@@ -2,8 +2,12 @@
   "name": "@onestop/print-templates",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
-    "build": "echo 'print template build placeholder'",
-    "test": "echo 'print template test placeholder'"
+    "build": "node --experimental-strip-types src/templates/interlinear.ts",
+    "test": "node --experimental-strip-types --test src/templates/interlinear.test.ts"
   }
 }
