@@ -3,6 +3,7 @@ import path from "node:path";
 import type { AnnotationDraft, ChunkDraft, DocumentMetadata } from "@onestop/contracts";
 
 import { scanDbRoot } from "./db-scan.ts";
+import { hydrateDocumentAnalysis } from "./hydrate-analysis.ts";
 import { mockDocuments, mockEditorChunks } from "../mock-data.ts";
 
 export interface StoredDocumentRecord {
@@ -156,5 +157,11 @@ export async function listDocumentRecords() {
 
 export async function getDocumentRecord(documentId: string) {
   const records = await listDocumentRecords();
-  return records.find((record) => record.id === documentId) ?? null;
+  const record = records.find((candidate) => candidate.id === documentId) ?? null;
+
+  if (!record) {
+    return null;
+  }
+
+  return hydrateDocumentAnalysis(record);
 }
