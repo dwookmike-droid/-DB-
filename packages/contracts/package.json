@@ -2,8 +2,12 @@
   "name": "@onestop/contracts",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "build": "echo 'contracts build placeholder'",
-    "test": "echo 'contracts test placeholder'"
+    "build": "node --experimental-strip-types src/index.ts",
+    "test": "node --experimental-strip-types src/index.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }
