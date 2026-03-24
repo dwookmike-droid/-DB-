@@ -1,5 +1,5 @@
 import type { RunMode } from "@onestop/contracts";
-import type { EditorChunk } from "@/components/editor/annotation-editor";
+import type { EditorChunk } from "../components/editor/annotation-editor.ts";
 
 export interface MockDocument {
   id: string;

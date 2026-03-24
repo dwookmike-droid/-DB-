@@ -1,9 +1,19 @@
 import { renderDocumentTable } from "../../components/documents/document-table";
 import { renderRunModeSelector } from "../../components/documents/run-mode-selector";
-import { mockDocuments } from "../../lib/mock-data";
+import { listDocumentRecords } from "../../lib/documents/store.ts";
 
-export default function DocumentsPage() {
-  const tableHtml = renderDocumentTable(mockDocuments);
+export const dynamic = "force-dynamic";
+
+export default async function DocumentsPage() {
+  const documents = await listDocumentRecords();
+  const tableHtml = renderDocumentTable(
+    documents.map((document) => ({
+      id: document.id,
+      title: document.metadata.title,
+      processingState: document.metadata.processingState,
+      runMode: document.metadata.runMode,
+    })),
+  );
   const modeHtml = renderRunModeSelector("review_before_export");
 
   return (
@@ -38,6 +48,15 @@ export default function DocumentsPage() {
         >
           업로드된 모의고사 문서를 상태와 실행 모드 기준으로 관리하는 교사용
           대시보드.
+        </p>
+        <p
+          style={{
+            margin: "0 0 16px",
+            font: '600 12px/1.5 "Pretendard", "Avenir Next", sans-serif',
+            color: "#7b6651",
+          }}
+        >
+          현재 문서 수 {documents.length}건
         </p>
         <div
           dangerouslySetInnerHTML={{ __html: modeHtml }}

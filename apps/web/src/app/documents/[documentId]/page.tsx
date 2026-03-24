@@ -1,10 +1,39 @@
+import { notFound } from "next/navigation";
 import { renderAnnotationEditor } from "../../../components/editor/annotation-editor";
 import { renderPrintCanvas } from "../../../components/editor/print-canvas";
-import { mockEditorChunks } from "../../../lib/mock-data";
+import { getDocumentRecord } from "../../../lib/documents/store.ts";
 
-export default function DocumentEditorPage() {
-  const selectedChunk = mockEditorChunks[0];
-  const canvasHtml = renderPrintCanvas(mockEditorChunks);
+export const dynamic = "force-dynamic";
+
+interface DocumentEditorPageProps {
+  params: Promise<{ documentId: string }>;
+}
+
+export default async function DocumentEditorPage({
+  params,
+}: DocumentEditorPageProps) {
+  const { documentId } = await params;
+  const document = await getDocumentRecord(documentId);
+
+  if (!document) {
+    notFound();
+  }
+
+  const editorChunks = document.analysis.chunks.map((chunk) => ({
+    id: chunk.id,
+    text: chunk.text,
+    annotations: document.analysis.annotations
+      .filter((annotation) => annotation.chunkId === chunk.id)
+      .sort((left, right) => left.priority - right.priority)
+      .map((annotation) => ({
+        id: annotation.id,
+        type: annotation.type,
+        text: annotation.text,
+      })),
+  }));
+
+  const selectedChunk = editorChunks[0];
+  const canvasHtml = renderPrintCanvas(editorChunks);
   const editorHtml = selectedChunk
     ? renderAnnotationEditor(selectedChunk)
     : "<div>No chunk selected</div>";
@@ -29,7 +58,7 @@ export default function DocumentEditorPage() {
             color: "#1d252d",
           }}
         >
-          Annotation Workspace
+          {document.metadata.title}
         </h1>
         <p
           style={{
@@ -40,6 +69,15 @@ export default function DocumentEditorPage() {
           }}
         >
           좌측은 인쇄용 캔버스, 우측은 선택한 chunk의 문법·어휘·DECODE 설명을 수정하는 편집 패널입니다.
+        </p>
+        <p
+          style={{
+            margin: "0 0 18px",
+            font: '600 12px/1.5 "Pretendard",sans-serif',
+            color: "#7d6b56",
+          }}
+        >
+          상태 {document.metadata.processingState} · 실행모드 {document.metadata.runMode}
         </p>
         <div
           style={{
