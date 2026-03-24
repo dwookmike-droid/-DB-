@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { AnnotationDraft, ChunkDraft, DocumentMetadata } from "@onestop/contracts";
 
+import { scanDbRoot } from "./db-scan.ts";
 import { mockDocuments, mockEditorChunks } from "../mock-data.ts";
 
 export interface StoredDocumentRecord {
@@ -149,7 +150,8 @@ export async function createDocumentRecord(metadata: DocumentMetadata) {
 
 export async function listDocumentRecords() {
   const storedRecords = await readStoredRecords();
-  return [...buildSeedRecords(), ...storedRecords];
+  const dbRecords = await scanDbRoot().catch(() => []);
+  return [...buildSeedRecords(), ...dbRecords, ...storedRecords];
 }
 
 export async function getDocumentRecord(documentId: string) {

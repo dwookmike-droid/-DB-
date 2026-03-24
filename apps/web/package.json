@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --experimental-strip-types --test src/lib/metadata/infer-metadata.test.ts src/components/documents/document-table.test.ts src/components/editor/annotation-editor.test.ts src/lib/run-modes/execute-document-mode.test.ts src/lib/documents/store.test.ts src/lib/documents/navigation.test.ts"
+    "test": "node --experimental-strip-types --test src/lib/metadata/infer-metadata.test.ts src/components/documents/document-table.test.ts src/components/editor/annotation-editor.test.ts src/lib/run-modes/execute-document-mode.test.ts src/lib/documents/store.test.ts src/lib/documents/navigation.test.ts src/lib/documents/db-scan.test.ts"
   },
   "dependencies": {
     "@onestop/contracts": "workspace:*",
