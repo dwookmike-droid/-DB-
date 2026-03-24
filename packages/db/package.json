@@ -3,7 +3,14 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "build": "echo 'db build placeholder'",
-    "test": "echo 'db test placeholder'"
+    "build": "pnpm run validate",
+    "validate": "pnpm exec prisma validate",
+    "test": "pnpm run validate"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.6.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.6.0"
   }
 }

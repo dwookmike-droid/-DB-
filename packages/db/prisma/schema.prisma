@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum FileType {
+  pdf
+  docx
+  md
+}
+
+enum DocumentType {
+  question
+  explanation
+  transcript
+  audio
+  supplement
+  unknown
+}
+
+enum RunMode {
+  draft_only
+  review_before_export
+  immediate_export
+}
+
+enum ProcessingState {
+  queued
+  extracting
+  analyzing
+  draft_ready
+  ready_for_review
+  exported
+  failed
+}
+
+enum AnnotationType {
+  grammar
+  vocab
+  decode
+}
+
+model Document {
+  id              String           @id @default(cuid())
+  title           String
+  sourcePath      String
+  fileType        FileType
+  documentType    DocumentType     @default(unknown)
+  grade           String
+  month           String
+  year            Int?
+  runMode         RunMode          @default(review_before_export)
+  processingState ProcessingState  @default(queued)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  sentences       Sentence[]
+  vocabularyItems VocabularyItem[]
+  exports         Export[]
+}
+
+model Sentence {
+  id            String    @id @default(cuid())
+  documentId    String
+  orderIndex    Int
+  text          String
+  translation   String?
+  decodeRole    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  document      Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunks        Chunk[]
+
+  @@index([documentId, orderIndex])
+}
+
+model Chunk {
+  id              String       @id @default(cuid())
+  sentenceId      String
+  text            String
+  startOffset     Int
+  endOffset       Int
+  syntaxLabel     String
+  highlightFamily String
+  displayOrder    Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  sentence        Sentence     @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  annotations     Annotation[]
+
+  @@index([sentenceId, displayOrder])
+}
+
+model Annotation {
+  id             String         @id @default(cuid())
+  chunkId        String
+  type           AnnotationType
+  text           String
+  colorFamily    String
+  visible        Boolean        @default(true)
+  priority       Int            @default(0)
+  teacherEdited  Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  chunk          Chunk          @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+
+  @@index([chunkId, priority])
+}
+
+model VocabularyItem {
+  id                   String    @id @default(cuid())
+  documentId           String
+  lemma                String
+  surfaceForm          String
+  pos                  String
+  meaningCandidates    Json
+  collocationCandidates Json
+  importance           Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  document             Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, lemma])
+}
+
+model Export {
+  id              String    @id @default(cuid())
+  documentId      String
+  templateVersion String
+  filePath        String
+  reviewed        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  document        Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, createdAt])
+}
+
+model Preset {
+  id                 String   @id @default(cuid())
+  name               String   @unique
+  description        String?
+  defaultRunMode     RunMode
+  grammarColor       String
+  vocabColor         String
+  decodeColorMap     Json
+  annotationDefaults Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
